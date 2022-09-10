@@ -1,22 +1,10 @@
-# COLLAGE MAKER
+# WORD CLOUD MAKER
 
-Create a photo mosaic from a reference photo using other pictures.
+Create a word cloud from a text input.
 
-![Collage maker](gifs/collage_maker.gif)
-
-You can try the app in the following url: https://collage-creator.herokuapp.com/
+You can try the app in the following url: `IN PROGRESS`
 
 `Note: Heroku is a free host with CPU and request time limitations, i'm sorry for any inconvenience this may cause`
-
-## HOW IT WORKS
-
-The app is made using the python library Dash, which allows creating a front-end from a python back-end.
-
-When the pictures are uploaded the predominant color of each of them is computed by applying a K-means algorithm to each.
-
-Once the predominant color of each photo is calculated, another K-means computes N clusters in the RGB space that collect the pictures with similar colors, in order to generate a palette of N colors.
-
-Finally, the distance in RGB space of each pixel of the reference image to each cluster centroid is computed and a photo of the closest cluster is replaced by the corresponding pixel. 
 
 ## FOR DEVELOPERS
 
@@ -41,6 +29,6 @@ Navigate to: `http://localhost:8080/`
 Run:
 
 ```
-docker build -t collage-maker .
-docker run -p 8080:80 collage-maker
+docker build -t word-cloud-maker .
+docker run -p 8080:80 word-cloud-maker
 ```
