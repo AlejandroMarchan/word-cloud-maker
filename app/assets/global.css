@@ -21,5 +21,24 @@ body {
 }
 
 .js-image-zoom__zoomed-image {
-    right: 280px !important;
+    right: 375px !important;
+}
+
+.upload {
+    font-size: 1.25rem;
+    width: 100%;
+    height: 100px;
+    line-height: 60px;
+    border-width: 1px;
+    border-style: dashed;
+    border-radius: 5px;
+    text-align: center;
+    padding-top: 15px;
+}
+
+.images-container img {
+    display: block;
+    margin: auto;
+    max-width: 90%;
+    max-height: 60vh;
 }

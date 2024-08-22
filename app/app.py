@@ -2,6 +2,7 @@
 import logging
 from datetime import date
 import sys
+from turtle import width
 import plotly.express as px
 import numpy as np
 from PIL import Image
@@ -47,13 +48,12 @@ import dash
 
 app = DashProxy(
     __name__, 
-    title="Word cloud maker", 
+    title="Word cloud generator", 
     transforms=[
         MultiplexerTransform(),  # makes it possible to target an output multiple times in callbacks
         LogTransform()  # makes it possible to write log messages to a Dash component
     ],
     external_stylesheets=[dbc.themes.BOOTSTRAP, 'https://use.fontawesome.com/releases/v6.2.0/css/all.css'],
-    external_scripts = ['https://unpkg.com/js-image-zoom/js-image-zoom.js', 'https://cdn.jsdelivr.net/npm/js-image-zoom/js-image-zoom.min.js'],
     meta_tags=[
         {"name": "viewport", "content": "width=device-width, initial-scale=1"},
     ],
@@ -67,9 +67,9 @@ app.layout = html.Div(
             [
                 dbc.Col(
                     [
-                        html.Img(src=app.get_asset_url("wordcloud-icon.png"), width='60px'),
-                        html.H2(
-                            "Word Cloud Maker",
+                        html.Img(src=app.get_asset_url("wordcloud-icon.png"), width='40px'),
+                        html.H3(
+                            "Word Cloud Generator",
                             id='title'
                         )
                     ],
@@ -80,199 +80,179 @@ app.layout = html.Div(
             align="center",
             style={
                 'margin-top': '30px',
+                'margin-bottom': '20px',
             }
         ),
         dbc.Row(
-            [
-                dbc.Col(
-                    dbc.Card(
-                        [
-                            dbc.CardBody(
-                                [
-                                    # dbc.Row(
-                                    #     [
-                                    #         dbc.Col(
-                                    #             html.H3(
-                                    #                 "Input text", 
-                                    #                 className="card-title text-center"
-                                    #             ),
-                                    #             width="12"
-                                    #         ),
-                                    #     ]
-                                    # ),
-                                    # html.Hr(),
-                                    dbc.Row(
-                                        [
-                                            dbc.Col(
-                                                [
-                                                    dcc.Upload(
-                                                        id='upload-image',
-                                                        children=html.Div(
-                                                            [
-                                                                'Drag and Drop or ',
-                                                                html.A(
-                                                                    [
-                                                                        'Select the reference image',
-                                                                        html.I(className="fas fa-image ms-2"),
-                                                                    ], 
-                                                                    style={"cursor": "pointer", 'color': 'var(--bs-primary)'}
-                                                                )
-                                                            ], 
-                                                            style={
-                                                                'font-size': '1.25rem',
-                                                                'width': '100%',
-                                                                'height': '100px',
-                                                                'lineHeight': '60px',
-                                                                'borderWidth': '1px',
-                                                                'borderStyle': 'dashed',
-                                                                'borderRadius': '5px',
-                                                                'textAlign': 'center',
-                                                                'padding-top': '15px'
-                                                            },
-                                                        ),
-                                                        accept="image/*",
-                                                        # Allow multiple files to be uploaded
-                                                        multiple=False
-                                                    )
-                                                ],
-                                                width="12"
-                                            ),
-                                        ],
-                                        justify="center",
-                                        align="center",
-                                        style={
-                                            'margin-bottom': '20px',
-                                        }
-                                    ),
-                                    dbc.Row(
-                                        [
-                                            dbc.Col(
-                                                [
-                                                    dcc.Upload(
-                                                        id='upload-text',
-                                                        children=html.Div(
-                                                            [
-                                                                'Drag and Drop or ',
-                                                                html.A(
-                                                                    [
-                                                                        'Select the reference text',
-                                                                        html.I(className="fas fa-file-lines ms-2"),
-                                                                    ], 
-                                                                    style={"cursor": "pointer", 'color': 'var(--bs-primary)'}
-                                                                )
-                                                            ], 
-                                                            style={
-                                                                'font-size': '1.25rem',
-                                                                'width': '100%',
-                                                                'height': '100px',
-                                                                'lineHeight': '60px',
-                                                                'borderWidth': '1px',
-                                                                'borderStyle': 'dashed',
-                                                                'borderRadius': '5px',
-                                                                'textAlign': 'center',
-                                                                'padding-top': '15px'
-                                                            },
-                                                        ),
-                                                        # Allow multiple files to be uploaded
-                                                        multiple=False
-                                                    )
-                                                ],
-                                                width="12"
-                                            ),
-                                        ],
-                                        justify="center",
-                                        align="center",
-                                        style={
-                                            'margin-bottom': '20px',
-                                        }
-                                    ),
-                                    dbc.Row(
-                                        [
-                                            dbc.Col(
+            dbc.Col(
+                dbc.Card(
+                    [
+                        dbc.CardBody(
+                            [
+                                # dbc.Row(
+                                #     [
+                                #         dbc.Col(
+                                #             html.H3(
+                                #                 "Input text", 
+                                #                 className="card-title text-center"
+                                #             ),
+                                #             width="12"
+                                #         ),
+                                #     ]
+                                # ),
+                                # html.Hr(),
+                                dbc.Row(
+                                    [
+                                        dbc.Col(
+                                            [
+                                                dcc.Upload(
+                                                    id='upload-image',
+                                                    className='upload',
+                                                    children=html.Div(
+                                                        [
+                                                            'Drag and Drop or ',
+                                                            html.A(
+                                                                [
+                                                                    'Select the reference image',
+                                                                    html.I(className="fas fa-image ms-2"),
+                                                                ], 
+                                                                style={"cursor": "pointer", 'color': 'var(--bs-primary)'}
+                                                            )
+                                                        ],
+                                                    ),
+                                                    accept="image/*",
+                                                    # Allow multiple files to be uploaded
+                                                    multiple=False
+                                                )
+                                            ],
+                                            width="4"
+                                        ),
+                                        dbc.Col(
+                                            [
+                                                dcc.Upload(
+                                                    id='upload-text',
+                                                    className='upload',
+                                                    children=html.Div(
+                                                        [
+                                                            'Drag and Drop or ',
+                                                            html.A(
+                                                                [
+                                                                    'Select the reference text',
+                                                                    html.I(className="fas fa-file-lines ms-2"),
+                                                                ], 
+                                                                style={"cursor": "pointer", 'color': 'var(--bs-primary)'}
+                                                            )
+                                                        ],
+                                                    ),
+                                                    # Allow multiple files to be uploaded
+                                                    multiple=False
+                                                ),
                                                 dbc.Textarea(
                                                     placeholder="Input text",
                                                     style={
-                                                        'height': '20vh',
+                                                        'height': '115px',
+                                                        'display': 'none'
                                                     }
-                                                ),
-                                            )
-                                        ]
-                                    ),
-                                    dbc.Row(
-                                        [
-                                            dbc.Col(
+                                                )
+                                            ],
+                                            width="4"
+                                        ),
+                                        dbc.Col(
+                                            [
                                                 dbc.Button(
                                                     [
                                                         "Generate wordcloud",
-                                                        html.I(className="fa-solid fa-play ms-2")
+                                                        html.I(className="fa-solid fa-arrow-right ms-2")
                                                     ],
                                                     id='generate-wordcloud-btn',
                                                     color="success"
                                                 ),
-                                                width='auto'
-                                            ),
-                                            dbc.Col(
-                                                [
-                                                    dbc.Button(
-                                                        [
-                                                            html.I(className="fas fa-download me-2"),
-                                                            "Download result",
-                                                        ],
-                                                        id='download-wordcloud-btn',
-                                                        disabled=True,
-                                                        color="primary"
-                                                    ), 
-                                                    dcc.Download(id="download-wordcloud")
-                                                ], 
-                                                width='auto'
-                                            )
-                                        ],
-                                        justify="end",
-                                        style={
-                                            'margin-top': '20px'
-                                        }
-                                    )
-                                ]
-                            )
-                        ],
-                        style={
-                            'height': '75vh',
-                        }
-                    ),
-                    width="5"
+                                                dbc.Button(
+                                                    [
+                                                        html.I(className="fas fa-download me-2"),
+                                                        "Download result",
+                                                    ],
+                                                    id='download-wordcloud-btn',
+                                                    disabled=True,
+                                                    color="primary",
+                                                    style={
+                                                        'margin-top': '10px'
+                                                    }
+                                                ), 
+                                                dcc.Download(id="download-wordcloud")
+                                            ], 
+                                            width='auto',
+                                            align='center',
+                                            style={
+                                                'display': 'grid'
+                                            }
+                                        )
+                                    ],
+                                    justify='center',
+                                    align='center'
+                                ),
+                                # dbc.Row(
+                                #     [
+                                        
+                                #     ],
+                                #     style={
+                                #         'margin-top': '20px'
+                                #     }
+                                # )
+                            ]
+                        )
+                    ]
+                ),
+                width="12"
+            ),
+        ),
+        dbc.Row(
+            [
+                # dbc.Col(
+                #     [
+                #         html.H4(
+                #             [
+                #                 "No wordclouds generated yet"
+                #             ], 
+                #             className="text-center",
+                #             style={
+                #                 'margin-top': '25px',
+                #                 'margin-bottom': '20px'
+                #             }
+                #         ),
+                #         Lottie(
+                #             options=dict(loop=True, autoplay=True), width="40%",
+                #             url="https://assets5.lottiefiles.com/private_files/lf30_bn5winlb.json",
+                #             isClickToPauseDisabled=True,
+                #             style={
+                #                 'margin-bottom': '3%',
+                #                 'cursor': 'default'
+                #             }
+                #         ),
+                #     ],
+                #     width='12'
+                # ),
+                dbc.Col(
+                    html.Img(src=app.get_asset_url("images/el_quijote.png"), id="reference-img"),
+                    id='reference-image-col',
+                    width='4'
                 ),
                 dcc.Loading(
                     [
-                        html.H4(
-                            [
-                                "No wordclouds generated yet"
-                            ], 
-                            className="text-center",
-                            style={
-                                'margin-top': '125px',
-                                'margin-bottom': '20px'
-                            }
-                        ),
-                        Lottie(
-                            options=dict(loop=True, autoplay=True), width="70%",
-                            url="https://assets5.lottiefiles.com/private_files/lf30_bn5winlb.json",
-                            isClickToPauseDisabled=True,
-                            style={
-                                'margin-bottom': '3%',
-                                'cursor': 'default'
-                            }
-                        ),
+                        html.Img(src=app.get_asset_url("images/el_quijote_wordcloud.png"), id="wordcloud-img")
                     ],
                     id='wordcloud-image-col',
-                    parent_className='col-7',
+                    parent_className='col-4',
                     parent_style={
                         'padding': '0'
                     }
                 )
             ],
+            className='images-container',
             style={
-                'margin-top': '30px',
-            }
+                'margin-top': '20px',
+            },
+            align='center'
         ),
         html.Footer(
             html.H6("© Copyright 2012 - Alejandro Marchán", id="copyright", className="text-center"),
@@ -344,7 +324,8 @@ def clean_text(text, stopwords_language='es'):
     with open(f'{STOPWORDS_PATH}/stopwords-{stopwords_language}.txt', 'r') as f:
         stop_words = f.readlines()
         stop_words += EXTRA_STOPWORDS
-    # stop_words = []
+    # To stop removing stopwords
+    stop_words = []
     for word in stop_words:
         word = word.rstrip('\n')
         regex = '\\b' + word + '\\b'
@@ -398,31 +379,7 @@ def generate_worcloud(n_clicks):
     tac = time.process_time()
     log.info(f'Wordcloud generated in {tac - tic} seconds')
 
-    return [html.Img(src=image, height='100%', id="wordcloud-img", style={'display': 'block', 'width': 'auto'})], False
-
-app.clientside_callback(
-    """
-    function(dummy, children) {
-        var options = {
-            height: 600,
-            scale: 0.5,
-            zoomWidth: 100
-        };
-        // var container = document.getElementById('wordcloud-image-col');
-        var container = document.getElementById('wordcloud-img').parentElement
-        if (zoom != null) {
-            zoom.kill();
-        }
-        zoom = new ImageZoom(container, options);
-        console.log('Zoom added');
-        return ['zoom'];
-    }
-    """,
-    Output('placeholder', 'children'),
-    Input('wordcloud-image-col', 'children'),
-    State('placeholder', 'children'),
-    prevent_initial_call=True,
-)
+    return [html.Img(src=image, id="wordcloud-img")], False
 
 @app.callback(
     Output("download-wordcloud", "data"), 
@@ -431,8 +388,19 @@ app.clientside_callback(
     prevent_initial_call=True,
 )
 def download_wordcloud(n_clicks, image_base64):
-    print('Download image')
     return dcc.send_bytes(base64.b64decode(image_base64.split(',')[1]), "wordcloud.png")
+
+@app.callback(
+    Output("reference-image-col", "children"), 
+    Input('upload-image', 'contents'),
+    # Input('test-reference-btn', 'n_clicks'),
+    prevent_initial_call=True,
+)
+def upload_reference_img(contents):
+    if dash.callback_context.triggered[0]['prop_id'] == 'test-reference-btn.n_clicks':
+        contents = f"data:image/jpg;base64,{base64.b64encode(open('app/assets/reference.JPEG', 'rb').read()).decode('utf-8')}"
+
+    return html.Img(src=contents, id="reference-img"),
 
 if __name__ == "__main__":
     app.run_server(debug=True, host="0.0.0.0", port=8080, use_reloader=False)
